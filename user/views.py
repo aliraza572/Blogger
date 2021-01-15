@@ -11,6 +11,7 @@ def index(request):
     context = {}
     return render(request, 'user/index.html',context)
 
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('user:index')
@@ -35,8 +36,8 @@ def login_view(request):
         context = {}
         return render(request, 'user/login.html',context)
 
-def signup(request):
 
+def signup(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name', False)
         last_name = request.POST.get('last_name', False)
