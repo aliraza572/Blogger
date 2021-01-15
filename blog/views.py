@@ -25,9 +25,9 @@ def home(request):
 
 
 def viewPost(request, pk):
-    print(pk)
+    # print(pk)
     obj = get_object_or_404(BlogPost, pk = pk)
-    print(obj)
+    # print(obj)
     context = {'blog_obj' : obj}
     return render(request, 'blog/blog_detail.html', context)
 
@@ -42,12 +42,34 @@ def deletePost(request, pk):
     print(obj)
     obj.delete()
     # context = {'blog_obj' : obj}
-    return render(request, 'blog/blog_detail.html')
+    return redirect('blog:viewAllPosts')
 
 
 def editPost(request, pk):
-    pass
+    if request.method == "POST":
+        # print("update part here")
+        obj = get_object_or_404(BlogPost, pk = pk)
+        # print(obj.id)
+        form = BlogForm(request.POST, request.FILES, instance=obj)
+        if form.is_valid:
+            form.save()
+            return redirect("blog:viewPost", pk=pk)
+        else:
+            return render(request, "blog/edit_post.html", {'form:obj'})
+    else:
+        obj = get_object_or_404(BlogPost, pk = pk)
+        # print("here")
+        # print(obj.id)
+        return render(request, "blog/edit_post.html", {'form' : obj})
 
 
-def updatePost(request, pk):
-    pass
+# def updatePost(request, pk):
+#     print("update part here")
+#     obj = get_object_or_404(BlogPost, pk = pk)
+#     print(obj.id)
+#     form = BlogForm(request.POST, instance=obj)
+#     if form.is_valid:
+#         form.save()
+#         return redirect("blog:viewPost")
+#     else:
+#         return render(request, "blog/edit_post.html", {'form:obj'})

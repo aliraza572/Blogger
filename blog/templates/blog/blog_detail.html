@@ -13,10 +13,13 @@
 <p>{{blog_obj.blog_body}}</p>
 
 
-<a></a>
-<button type="button">Edit</button>
-<button type="button">Delete</button>
+<a href = "{% url 'blog:editPost' blog_obj.id %}">
+    <button type="button">Edit</button>
+</a>
 
+<a href = "{% url 'blog:deletePost' blog_obj.id %}">
+    <button type="button">Delete</button>
+</a>
 
 </body>
 </html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Blog Post</title>
+</head>
+<body>
+
+<h1>Write your blog with Blogger...</h1>
+<form action = "" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.errors}}
+
+    {{form.blog_title.label}}
+    <input type="text" placeholder="Title" name="blog_title" required value = "{{form.blog_title}}">
+    
+    
+    {{form.blog_image.label}}
+    <label for="myfile">Select Image:</label>
+    <input type="file" id="myfile" name="blog_image" accept="image/*" value = {{form.blog_image}} required>
+
+    
+    {{form.blog_body.label }}
+    <textarea name="blog_body" rows="4" cols="50" placeholher = "Write your blog here...">{{form.blog_body}}    
+    </textarea> 
+
+    <a href = "{% url 'blog:editPost' form.id %}">
+        <button type = "submit">Update</button>
+    </a>
+</form>
+
+
+
+
+
+</body>
+</html>
