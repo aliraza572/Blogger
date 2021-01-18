@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>All Blogs</title>
+  </head>
+  <body>
+    <h1>All Blogs</h1>
+    {% if all_blogs %}
+        <ol>
+        {% for obj in all_blogs %}
+            <li>
+                <a href={%url 'blog:viewPost' obj.id%}  >
+                    {{ obj.blog_title }}
+                </a>
+            </li>
+        {% endfor %}
+        </ol>
+    {% else %}
+        <p>No blogs are available.</p>
+    {% endif %}
+
+  </body>
+</html>

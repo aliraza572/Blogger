@@ -7,13 +7,31 @@
 
 <h1>Blogger</h1>
 <p>Want to share your thoughts with the world. Welcome to Blogger.</p>
-<a href = "{% url 'user:login' %}">
-    <button type="button">Login</button>
-</a><br/>
 
-<a href="{% url 'user:signup' %}">
-    <button type="button">SignUp</button>
-</a>
+
+    {% if user.is_authenticated %}
+        <h3>Hello, {{user.first_name}}</h3>
+
+        <a href="{% url 'user:logout' %}">
+            <button type="button">Logout</button>
+        </a>
+
+        <a href="{% url 'blog:home' %}">
+            <button type="button">Create Blog</button>
+        </a>
+
+        <a href="{% url 'blog:viewAllPosts' %}">
+            <button type="button">View all blogs</button>
+        </a>
+    {% else %}
+        <a href = "{% url 'user:login' %}">
+            <button type="button">Login</button>
+        </a><br/>
+
+        <a href="{% url 'user:signup' %}">
+            <button type="button">SignUp</button>
+        </a>
+    {% endif %}
 
 
 

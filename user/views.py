@@ -4,13 +4,17 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required
 
+# @login_required
 def index(request):
     context = {}
     return render(request, 'user/index.html',context)
 
+
 def login_view(request):
-    print(request.method)
+    if request.user.is_authenticated:
+        return redirect('user:index')
 
     if request.method == 'POST':
         password = request.POST.get('password', False)    
@@ -32,8 +36,8 @@ def login_view(request):
         context = {}
         return render(request, 'user/login.html',context)
 
-def signup(request):
 
+def signup(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name', False)
         last_name = request.POST.get('last_name', False)
@@ -62,4 +66,5 @@ def signup(request):
         return render(request, 'user/signup.html',context)
 
 def logout(request):
-    pass
+    auth.logout(request)
+    return redirect("user:index")
