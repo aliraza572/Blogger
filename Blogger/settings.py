@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'Blogger.urls'
 
 TEMPLATES = [
@@ -117,7 +118,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-LOGIN_URL = 'login/' # this is added 
+LOGIN_URL = '/login/' # this is required for @login_required decorator...
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
+from datetime import datetime, timedelta
+from django.conf import settings
+from .forms import *
 
 # @login_required
 def index(request):
@@ -19,14 +22,18 @@ def login_view(request):
     if request.method == 'POST':
         password = request.POST.get('password', False)    
         username = request.POST.get('username', False)
-        print(username, password)
+        remember = request.POST.get('remember', False)
+        print(remember)
+        # print(username, password)
         
         user = authenticate(request, username=username, password=password)
-        print(user)
+        # print(user)
         print(User.objects.filter(username=username), user)
         if user:
-            print(user)
+            # print(user)
             login(request, user)
+            if not remember:
+                request.session.set_expiry(5*60) #making a session of 5 minutes
             return redirect("user:index")
         else:
             messages.error(request, "Username or password is incorrect...")
@@ -38,32 +45,42 @@ def login_view(request):
 
 
 def signup(request):
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name', False)
-        last_name = request.POST.get('last_name', False)
-        username = request.POST.get('username', False)
-        email = request.POST.get('email', False)
-        password = request.POST.get('password1', False)    
-        confirm_password = request.POST.get('password2', False)
+    # if request.method == 'POST':
+    #     first_name = request.POST.get('first_name', False)
+    #     last_name = request.POST.get('last_name', False)
+    #     username = request.POST.get('username', False)
+    #     email = request.POST.get('email', False)
+    #     password = request.POST.get('password1', False)    
+    #     confirm_password = request.POST.get('password2', False)
 
-        if password == confirm_password:
-            if User.objects.filter(username=username).exists():
-                messages.error(request, 'Thsi username is already taken...')
-                return redirect('user:signup')
-            elif User.objects.filter(email=email).exists():
-                messages.error(request,"This email is already registered...")
-                return redirect('user:signup')
-            else:
-                user = User.objects.create(first_name=first_name, last_name= last_name, username=username, email=email, password=make_password(password))
-                user.save()
-                messages.info(request, "user created successfully. Please Login to continue...")
-                return redirect('user:login')
-        else:
-            messages.error(request,"Password does not match...")
-            return redirect('user:signup')
-    else:
-        context = {}
-        return render(request, 'user/signup.html',context)
+    #     if password == confirm_password:
+    #         if User.objects.filter(username=username).exists():
+    #             messages.error(request, 'Thsi username is already taken...')
+    #             return redirect('user:signup')
+    #         elif User.objects.filter(email=email).exists():
+    #             messages.error(request,"This email is already registered...")
+    #             return redirect('user:signup')
+    #         else:
+    #             user = User.objects.create(first_name=first_name, last_name= last_name, username=username, email=email, password=make_password(password))
+    #             user.save()
+    #             messages.info(request, "user created successfully. Please Login to continue...")
+    #             return redirect('user:login')
+    #     else:
+    #         messages.error(request,"Password does not match...")
+    #         return redirect('user:signup')
+    # else:
+    #     context = {}
+    #     return render(request, 'user/signup.html',context)
+
+    form = SignUpForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect('user:login')
+
+    return render(request, 'user/signup.html',{'form':form})
+        
+        
+
 
 def logout(request):
     auth.logout(request)
