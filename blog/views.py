@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .forms import *
 from .models import *
 from django.contrib.auth.decorators import login_required
-
+from django.http import JsonResponse
 
 
 @login_required
@@ -14,7 +14,7 @@ def home(request):
             # blog_title = form.cleaned_data["blog_title"]
             # blog_body = form.cleaned_data["blog_body"]
             # blog_image = form.cleaned_data["blog_image"]
-            
+
             post = form.save(commit=False)
             post.user = request.user
             post.save()
@@ -32,12 +32,30 @@ def home(request):
     return render(request, "blog/home.html", context)
 
 
+def ajaxPostBlog(request):
+    context = {}
+    if request.method == "POST":
+        form = BlogForm(request.POST, request.FILES)
+        if form.is_valid():
+
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            obj = BlogPost.objects.filter(username=request.user)
+            return JsonResponse({'status':200, 'data':obj}) # if form is valid then send OK
+        return JsonResponse({'status':400, 'data':form})
+        
+
+
 @login_required
 def viewPost(request, pk):
     # print(pk)
     obj = get_object_or_404(BlogPost, pk=pk)
-    # print(obj)
-    context = {'blog_obj': obj}
+    if obj.user == request.user:
+        # print(obj)
+        context = {'blog_obj': obj}
+    else:
+        return HttpResponse("404")
     return render(request, 'blog/blog_detail.html', context)
 
 
@@ -73,15 +91,3 @@ def editPost(request, pk):
         # print("here")
         # print(obj.id)
         return render(request, "blog/edit_post.html", {'form': obj})
-
-
-# def updatePost(request, pk):
-#     print("update part here")
-#     obj = get_object_or_404(BlogPost, pk = pk)
-#     print(obj.id)
-#     form = BlogForm(request.POST, instance=obj)
-#     if form.is_valid:
-#         form.save()
-#         return redirect("blog:viewPost")
-#     else:
-#         return render(request, "blog/edit_post.html", {'form:obj'})

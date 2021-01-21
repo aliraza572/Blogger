@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+SignUp
+{% endblock  %}
+
+{% block css %}
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="{% static 'assets/fonts/material-icon/css/material-design-iconic-font.min.css' %}">
+    <!-- Main css -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+{% endblock  %}
+
+{% block body %}
+
+
+    <div class="main">
+
+        <!-- Sign up form -->
+        <section class="signup">
+            <div class="container">
+                <div class="signup-content">
+                    <div class="signup-form">
+                        <h2 class="form-title">Sign up</h2>
+                        <form action="{% url 'user:signup' %}" method="POST" class="register-form" id="register-form">
+                        {% csrf_token %}
+
+
+                            {% for field in form %}
+                                
+                            <div class="form-group">
+                                {% comment %} {{ field.label_tag }}<br> {% endcomment %}
+                                {{ field }}
+                                {% comment %} {% if field.help_text %}
+                                    <small style="color: grey">{{ field.help_text }}</small>
+                                {% endif %} {% endcomment %}
+                                {% for error in field.errors %}
+                                    <p style="color: red">{{ error }}</p>
+                                {% endfor %}
+                                
+                            </div>
+                            
+                            {% endfor %}  
+
+                            <div class="form-group form-button">
+                                <input type="submit" name="signup" id="signup" class="form-submit" value="SignUp"/>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <div class="signup-image">
+                        <figure><img src="{% static 'assets/img/signup-image.jpg' %}" alt="sing up image"></figure>
+                        <a href="{% url 'user:login' %}" class="signup-image-link">I am already member</a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock  %}
+
+{% block script %}
+    <!-- JS -->
+    <script src="{% static 'assets/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+{% endblock  %}
