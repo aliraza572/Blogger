@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+All Blog Posts
+{% endblock  %}
+
+
+
+{% block body %}
+
+<h1>All Blogs</h1>
+
+<button type="button" class="btn btn-primary btn-success btn-lg" data-toggle="modal" data-target="#exampleModalCenter">
+  Add Blog
+</button>    
+
+    {% if all_blogs %}
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">Blog No.</th>
+            <th scope="col">Blog Title</th>
+            <th scope="col">Edit Blog</th>
+            <th scope="col">Delete Blog</th>
+            </tr>
+        </thead>
+        {% for obj in all_blogs %}
+        <tbody>
+            <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td><a href={%url 'blog:viewPost' obj.id%}>{{ obj.blog_title }}</a></td>
+            <td>
+                <a href="{% url 'blog:editPost' obj.id %}"> <button type="button" class="btn btn-warning">Edit</button> </a>
+            </td>
+
+            <td>
+                <a href="{% url 'blog:deletePost' obj.id %}"> <button type="button" class="btn btn-danger">Delete</button> </a>
+            </td>
+            </tr>
+            
+        </tbody>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No blogs are available.</p>
+    {% endif %}
+<hr>
+
+
+{% comment %} -- Modal --> {% endcomment %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add a Blog</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+
+        <div class="modal-body">
+            
+
+
+            <form method="post" enctype="multipart/form-data" id="blogForm">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <label for="blogTitleLabel" class="col-form-label">Blog Title</label> 
+                    <input for="blogTitleLabel" class="form-control" type="text" name="blog_title" required>   
+                </div>
+
+                <div class="form-group">
+                    <label for="blogImageLabel">Blog Image</label>
+                    <input type="file" class="form-control-file" id="blogImageLabel" name="blog_image" accept="image/*" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="blogBodyLabel">Blog Body</label>
+                    <textarea class="form-control" id="blogBodyLabel" rows="4" name="blog_body" required></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type = "submit" class="btn btn-primary">Post</button>
+                </div>
+                
+            </form>
+
+
+
+
+        </div>
+
+
+      
+    </div>
+  </div>
+</div>
+
+
+{% endblock  %}
+
+
+{% block script %}
+<script>
+$('#blogForm').submit(function(){
+ $.ajax(
+    {
+        type:"POST",
+        url: "/likepost",
+        data:{
+                csrfmiddlewaretoken: {{ csrf_token }}
+                 blog:
+                 name: 
+        },
+        success: function( data ) 
+        {
+            $( '#like'+ catid ).remove();
+            $( '#message' ).text(data);
+        }
+     })
+});
+})
+</script>
+{% endblock  %}
+

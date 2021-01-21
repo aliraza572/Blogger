@@ -9,10 +9,10 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from .forms import *
 
-# @login_required
+
 def index(request):
     context = {}
-    return render(request, 'user/index.html',context)
+    return render(request, 'user/index.html', context)
 
 
 def login_view(request):
@@ -20,12 +20,12 @@ def login_view(request):
         return redirect('user:index')
 
     if request.method == 'POST':
-        password = request.POST.get('password', False)    
+        password = request.POST.get('password', False)
         username = request.POST.get('username', False)
         remember = request.POST.get('remember', False)
         print(remember)
         # print(username, password)
-        
+
         user = authenticate(request, username=username, password=password)
         # print(user)
         print(User.objects.filter(username=username), user)
@@ -33,7 +33,7 @@ def login_view(request):
             # print(user)
             login(request, user)
             if not remember:
-                request.session.set_expiry(5*60) #making a session of 5 minutes
+                request.session.set_expiry(5)  # making a session of 5 minutes
             return redirect("user:index")
         else:
             messages.error(request, "Username or password is incorrect...")
@@ -41,7 +41,7 @@ def login_view(request):
 
     else:
         context = {}
-        return render(request, 'user/login.html',context)
+        return render(request, 'user/login.html', context)
 
 
 def signup(request):
@@ -50,7 +50,7 @@ def signup(request):
     #     last_name = request.POST.get('last_name', False)
     #     username = request.POST.get('username', False)
     #     email = request.POST.get('email', False)
-    #     password = request.POST.get('password1', False)    
+    #     password = request.POST.get('password1', False)
     #     confirm_password = request.POST.get('password2', False)
 
     #     if password == confirm_password:
@@ -77,9 +77,7 @@ def signup(request):
         form.save()
         return redirect('user:login')
 
-    return render(request, 'user/signup.html',{'form':form})
-        
-        
+    return render(request, 'user/signup.html', {'form': form})
 
 
 def logout(request):

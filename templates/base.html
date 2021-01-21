@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>
+		{% block title %} {% endblock %}
+	</title>
+	
+	<meta name="description" content="Thoughts, reviews and ideas since 1999."/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<link rel="shortcut icon" href="#">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	{% comment %} <link rel="stylesheet" type="text/css" href="{% static 'assets/css/screen.css' %}"/> {% endcomment %}
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:400,300italic,300,400italic,700,700italic|Playfair+Display:400,700,400italic,700italic"/>
+	
+	{% block css %}
+
+	{% endblock  %}
+	
+</head>
+<body class="home-template">
+<div class="site-wrapper">
+{% comment %} Nav Bar {% endcomment %}
+	<nav class="main-nav overlay clearfix">
+        <a class="blog-logo" href="#"><img src="{% static 'assets/img/logo.png' %}" alt="Fashion Critiques"/></a>
+        <ul id="menu">
+        
+            <li class="nav-article-example" role="presentation"><a href="article.html">FAQs</a></li>
+
+			{% if user.is_authenticated %}			
+            	<li class="nav-author-page" role="presentation"><a href="{% url 'blog:home' %}">Write Blog</a></li>
+            	<li class="nav-author-page" role="presentation"><a href="{% url 'blog:viewAllPosts' %}">View All Blogs</a></li>
+            	<li class="nav-author-page" role="presentation"><a href="{% url 'user:logout' %}">Logout</a></li>
+            	<li class="nav-article-example" role="presentation"><a href="#">Hello, {{user.username}}!</a></li>
+
+			{% else %}
+			
+            <li class="nav-about-us" role="presentation"><a href="{% url 'user:login' %}">Login</a></li>
+            <li class="nav-author-page" role="presentation"><a href="{% url 'user:signup' %}">Sign Up</a></li>
+            
+			{% endif %}
+
+        </ul>
+	</nav>
+
+
+    
+
+    {% block body %}
+
+    {% endblock %}
+
+    {% comment %} Footer {% endcomment %}
+	<footer class="site-footer clearfix">
+        <a href="#top" id="back-to-top" class="back-top"></a>
+        <div class="text-center">
+            <a href="index.html">Nectaria Template</a> &copy; 2016<br/>
+            Free HTML Template by <a href="https://wowthemes.net">WowThemes.net</a>
+        </div>
+	</footer>
+</div>
+
+
+
+
+
+{% comment %} <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script> {% endcomment %}
+{% comment %} <script type="text/javascript" src="{% static 'assets/js/masonry.min.js' %}"></script> {% endcomment %}
+{% comment %} <script type="text/javascript" src="{% static 'assets/js/jquery.fitvids.js' %}"></script> {% endcomment %}
+{% comment %} <script type="text/javascript" src="{% static 'assets/js/index.js' %}"></script> {% endcomment %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	{% block script %}
+{% endblock  %}
+</body>
+</html>
