@@ -15,8 +15,9 @@ All Blog Posts
   Add Blog
 </button>    
 
-    {% if all_blogs %}
-    <table class="table">
+    <table
+        style=" display: {% if all_blogs %}block{%else%}none{%endif%} "
+     class="table" id="allBlogsTable">
         <thead>
             <tr>
             <th scope="col">Blog No.</th>
@@ -25,8 +26,8 @@ All Blog Posts
             <th scope="col">Delete Blog</th>
             </tr>
         </thead>
-        {% for obj in all_blogs %}
-        <tbody>
+        <tbody id="allBlogsRow">
+            {% for obj in all_blogs %}
             <tr>
             <th scope="row">{{forloop.counter}}</th>
             <td><a href={%url 'blog:viewPost' obj.id%}>{{ obj.blog_title }}</a></td>
@@ -38,13 +39,9 @@ All Blog Posts
                 <a href="{% url 'blog:deletePost' obj.id %}"> <button type="button" class="btn btn-danger">Delete</button> </a>
             </td>
             </tr>
-            
+            {% endfor %}
         </tbody>
-        {% endfor %}
     </table>
-    {% else %}
-        <p>No blogs are available.</p>
-    {% endif %}
 <hr>
 
 
@@ -59,12 +56,7 @@ All Blog Posts
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-
-
         <div class="modal-body">
-            
-
-
             <form method="post" enctype="multipart/form-data" id="blogForm">
                 {% csrf_token %}
                 <div class="form-group row">
@@ -86,16 +78,8 @@ All Blog Posts
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type = "submit" class="btn btn-primary">Post</button>
                 </div>
-                
             </form>
-
-
-
-
         </div>
-
-
-      
     </div>
   </div>
 </div>
@@ -106,24 +90,74 @@ All Blog Posts
 
 {% block script %}
 <script>
-$('#blogForm').submit(function(){
- $.ajax(
-    {
-        type:"POST",
-        url: "/likepost",
-        data:{
-                csrfmiddlewaretoken: {{ csrf_token }}
-                 blog:
-                 name: 
+
+
+$('#blogForm').on('submit', function(e){
+    //alert('here111')
+    e.preventDefault()
+    
+    
+    var form = $("#blogForm").closest("form");
+    var formData = new FormData(form[0]);
+    
+    $.ajax({
+        type : "POST",
+        url : "/blog/ajaxPostBlog/", 
+        data : formData,
+        // these parameters are used for handling files
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        success: function(data){
+            
+            //step 1: clear form and hide the modal
+            $('#blogForm').trigger('reset')
+            $('#exampleModalCenter').modal('hide')
+            // adding the newly added blog in the last row
+            var instance = JSON.parse(data['data']);
+            console.log(instance)
+            var fields = instance[0]["fields"];
+            console.log(fields)
+
+            var x = document.getElementById("allBlogsTable");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            }
+
+            let count = Number('{{all_blogs|length}}')+1
+            console.log(count)
+            let blogId = instance[0]["pk"];
+            console.log(blogId)
+            let row = `
+            <tr>
+                <th scope="row">${count}</th>
+                <td><a href='/blog/viewPost/${blogId}'>${fields["blog_title"]||""}</a></td>
+                <td>
+                    <a href="/blog/editPost/${blogId}"> <button type="button" class="btn btn-warning">Edit</button> </a>
+                </td>
+
+                <td>
+                    <a href="/blog/deletePost/${blogId}"> <button type="button" class="btn btn-danger">${"Delete"}</button> </a>
+                </td>
+            </tr>
+            `;
+            
+
+            $('#allBlogsRow').append(row);
+               
+
+
+
         },
-        success: function( data ) 
-        {
-            $( '#like'+ catid ).remove();
-            $( '#message' ).text(data);
-        }
-     })
+        failure: function(){
+            //handling failure operation here
+
+        },
+        error: function(response){
+            alert(response["responseJSON"]["error"]['blog_image']);
+        },
+    });
 });
-})
 </script>
 {% endblock  %}
 

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.core import serializers
 from .forms import *
 from .models import *
 from django.contrib.auth.decorators import login_required
@@ -33,18 +34,24 @@ def home(request):
 
 
 def ajaxPostBlog(request):
-    context = {}
+    # print("hereeeeeee", request.method)
+    # check if form is submitted through ajax request
     if request.method == "POST":
         form = BlogForm(request.POST, request.FILES)
         if form.is_valid():
-
+            # print('form is valid')
             post = form.save(commit=False)
             post.user = request.user
             post.save()
-            obj = BlogPost.objects.filter(username=request.user)
-            return JsonResponse({'status':200, 'data':obj}) # if form is valid then send OK
-        return JsonResponse({'status':400, 'data':form})
-        
+            # print("post = " , post)
+            # making serialized instance in json format
+            ser_instance = serializers.serialize('json', [post,])
+            # if form is valid then send OK
+            return JsonResponse({'data': ser_instance}, status=200)
+        else:
+            print('else')
+            return JsonResponse({"error": form.errors}, status=400)
+    return JsonResponse({"error": "Some error occured"}, status=400)
 
 
 @login_required
